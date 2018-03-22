@@ -27,7 +27,13 @@ exports.match = function(eq = defaultEQ, options = defaultOptions){
         if(template instanceof WildcardPattern){
             return bindings;
         } else if (typeof(object) === typeof(template)) {
-            // TODO: Use eq and recursively check object with the template
+            // First, check the primitives
+            // Does eq have a method to check the type of `object`?
+            if(eq[typeof(object)] !== undefined){
+                // If so, check the object against the template
+                // Checking primitive against primitive generates no bindings
+                return eq[typeof(object)](object, template) ? bindings : false;
+            }
             return false;
         } else {
             return false;
