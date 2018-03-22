@@ -1,0 +1,19 @@
+{
+  "name": "rsvp-match",
+  "version": "1.0.0",
+  "description": "Library to match Javascript objects to templates",
+  "main": "match.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshi-sh/rsvp-match.git"
+  },
+  "author": "Shubham Joshi",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/joshi-sh/rsvp-match/issues"
+  },
+  "homepage": "https://github.com/joshi-sh/rsvp-match#readme"
+}
