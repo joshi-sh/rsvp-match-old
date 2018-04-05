@@ -1,11 +1,13 @@
 
 /*
  * Equality operators for primitive types. Derived types are controlled by various options specified later.
+ * Note that eq.key is used to compare object keys, even though this is technically for a derived type.
  */
 exports.defaultEQ = {
     number: (x, y) => x === y,
     string: (x,y) => x === y,
-    boolean: (x, y) => x === y
+    boolean: (x, y) => x === y,
+    key: (x, y) => x === y
 };
 
 exports.defaultOptions = {
@@ -22,7 +24,7 @@ let WildcardPattern = function(){ return this; };
 
 exports._ = new WildcardPattern();
 
-exports.match = function(eq = defaultEQ, options = defaultOptions){
+let match = function(eq = exports.defaultEQ, options = exports.defaultOptions){
     return function(object, template, bindings = {}){
         if(template instanceof WildcardPattern){
             return bindings;
@@ -34,9 +36,23 @@ exports.match = function(eq = defaultEQ, options = defaultOptions){
                 // Checking primitive against primitive generates no bindings
                 return eq[typeof(object)](object, template) ? bindings : false;
             }
+            // Next, check for arrays
+            // TODO: add support for array options
+            if([object, template].every(Array.isArray)){
+                // First match each object[i] with template[i]
+                let elementwiseMatchAttempts = 
+                        object.map(function(element, index){ return (match(eq, options))(element, template[index]); });
+                // Next, check that each object successfully matched the corresponding template
+                if(elementwiseMatchAttempts.every(t => typeof(t) === 'object')){
+                    // If so, the arrays match. Return the bindings array
+                    return elementwiseMatchAttempts;
+                } else return false;
+            }
             return false;
         } else {
             return false;
         }
     };
 };
+
+exports.match = match;
