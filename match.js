@@ -25,7 +25,7 @@ let WildcardPattern = function(){ return this; };
 exports._ = new WildcardPattern();
 
 let match = function(eq = exports.defaultEQ, options = exports.defaultOptions){
-    return function(object, template, bindings = {}){
+    let m = function(object, template, bindings = {}){
         if(template instanceof WildcardPattern){
             return bindings;
         } else if (typeof(object) === typeof(template)) {
@@ -39,20 +39,22 @@ let match = function(eq = exports.defaultEQ, options = exports.defaultOptions){
             // Next, check for arrays
             // TODO: add support for array options
             if([object, template].every(Array.isArray)){
-                // First match each object[i] with template[i]
-                let elementwiseMatchAttempts = 
-                        object.map(function(element, index){ return (match(eq, options))(element, template[index]); });
-                // Next, check that each object successfully matched the corresponding template
-                if(elementwiseMatchAttempts.every(t => typeof(t) === 'object')){
-                    // If so, the arrays match. Return the bindings array
-                    return elementwiseMatchAttempts;
-                } else return false;
+                if(object.length !== template.length) return false;
+                let matches = [], matchSucceeded = object.every((value, index) => {
+                    let t = m(value, template[index]);
+                    if(typeof(t) === 'object'){
+                        matches.push(t);
+                        return true;
+                    } else return false;
+                });
+                return matchSucceeded ? matches : false;
             }
             return false;
         } else {
             return false;
         }
     };
+    return m;
 };
 
 exports.match = match;

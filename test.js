@@ -11,7 +11,10 @@ let defaultMatchFunction = match.match();
     {name: 'Boolean against same', object: true, pattern: true, expected: {}},
     {name: 'Boolean against different', object: true, pattern: false, expected: false},
     {name: 'String against same', object: 'foo', pattern: 'foo', expected: {}},
-    {name: 'String against different', object: 'foo', pattern: 'bar', expected: false}
+    {name: 'String against different', object: 'foo', pattern: 'bar', expected: false},
+    {name: 'Array of primitives', object: [0, true, ''], pattern: [0, true, ''], expected: [{}, {}, {}]},
+    {name: 'Array of primitives against superset', object: [0, true, ''], pattern: [0, true, '', match._], expected: false},
+    {name: 'Array of primitives against different', object: [0, true, ''], pattern: ['foo'], expected: false}
 ].forEach(({name, object, pattern, expected}) => {
     test(name, t => t.deepEqual(defaultMatchFunction(object, pattern), expected));
 });
