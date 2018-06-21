@@ -1,7 +1,7 @@
 import test from 'ava';
 import * as match from './match.js';
 
-let defaultMatchFunction = match.match();
+let defaultMatchFunction = match.match;
 
 [
     {name: 'Any object with wildcard', object: {x: 0, y: 0}, pattern: match._, expected: {}},
